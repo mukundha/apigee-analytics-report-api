@@ -1,0 +1,67 @@
+swagger: 2.0
+info:
+  version: "0.0.1"
+  title: Apigee Analytics Charts API
+# during dev, should point to your local machine
+host: localhost
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - text/html
+x-volos-resources: {}
+paths:
+  /o/{org}/e/{env}/stats/{stat}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: charts
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+    get:
+      description: Returns Chart representation of the Apigee analytics data
+      # used as the method name of the controller
+      operationId: renderChart
+      parameters:
+        - name: select
+          in: query
+          description: The measure to select
+          required: true
+          type: string
+        - name: timeRange
+          in: query
+          description: Time Range for the query
+          required: true
+          type: string
+        - name: sortBy
+          in: query
+          description: sorts by measure
+          required: false
+          type: string          
+        - name: timeUnit
+          in: query
+          description: Time unit
+          required: true
+          type: string    
+      responses:
+        "200":
+          description: HTML rendered Chart data
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: ErrorResponse
+# complex objects have schema definitions
+definitions:
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
